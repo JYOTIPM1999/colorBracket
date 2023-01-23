@@ -14,6 +14,7 @@ app.post("/signup", async (req, res) => {
   console.log(name, password, user_id);
 
   const exist = UserModel.findOne({ user_id });
+  console.log(exist);
   if (exist) {
     res.send("User id already existed change user Id");
   } else {
@@ -22,6 +23,25 @@ app.post("/signup", async (req, res) => {
     await user.save();
     res.send("User created successfully");
   }
+});
+
+app.post("/login", async (req, res) => {
+  const { user_id, password } = req.body;
+  const user = await UserModel.findOne({ user_id });
+  if (user) {
+    if (await argon2.verify(user.password, password)) {
+      //generate the token
+      const token = jwt.sign(
+        { id: user._id, name: user.name, userID: user.user_id },
+        "Secret1234",
+        {
+          expiresIn: "1 hours",
+        }
+      );
+      return res.send({ message: "Login success", token });
+    }
+  }
+  return res.status(401).send("Invalid Credentials");
 });
 
 mongoose
