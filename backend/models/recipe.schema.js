@@ -6,5 +6,5 @@ const recipeSchema = mongoose.Schema({
   image_url: { type: String, require: true },
 });
 
-const RecipeModel = mongoose.model("user", recipeSchema);
+const RecipeModel = mongoose.model("recipe", recipeSchema);
 module.exports = RecipeModel;
